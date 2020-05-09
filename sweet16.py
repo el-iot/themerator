@@ -284,7 +284,7 @@ class ThemeMaker:
         if not self.designations:
             raise ValueError("No colours designated")
 
-        if not vim or shell:
+        if not (vim or shell):
             raise ValueError("Must select at least one or 'shell' or 'vim'")
 
         if vim:
