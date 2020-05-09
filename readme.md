@@ -24,3 +24,7 @@ Here are some example images and their corresponding themes
     <img src="assets/matrix.jpg" width="320" height="320"/> <img src="assets/matrix_theme.png" width="480" height="320"/><br>
     <img src="assets/flower.jpg" width="320" height="320"/> <img src="assets/flower_theme.png" width="480" height="320"/><br>
 </p>
+
+<h1> Relevant Projects </h1>
+* [Base16](https://github.com/chriskempson/base16)
+* [ColorThief-Python](https://github.com/fengsp/color-thief-py)
