@@ -1,16 +1,21 @@
 <h1> Sweet16 </h1>
 A Base16 Theme-Generator for Shell and Vim <br>
 
+
+This is not very functional right now and a work-in-progress. Can only currently be used in a python environment (Python > 3.6).
+
 <h1> Usage </h1>
 <a href="https://asciinema.org/a/e92tBmIIRPLs5TAqCZ2fjgfin" target="_blank"><img src="https://asciinema.org/a/e92tBmIIRPLs5TAqCZ2fjgfin.svg" /></a>
 
 <h1> Examples </h1>
 <h2> Before </h2>
+
 Here is how your terminal might look *before* the magic happens
 
 ![Before](/assets/before.png)
 
 <h2> After </h2>
+
 Here are some example images and their corresponding themes
 
 <p align="center">
