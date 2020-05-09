@@ -1,5 +1,5 @@
 """
-Base16FromImage
+Sweet16
 A Base16 Theme-Generator for Shell and Vim
 """
 import math
@@ -262,6 +262,8 @@ class ThemeMaker:
     def save(
         self,
         theme_name,
+        vim=True,
+        shell=True,
         base16_vim_path="~/.config/nvim/plugged/base16-vim",
         base16_shell_path="~/.config/base16-shell",
     ) -> None:
@@ -270,40 +272,48 @@ class ThemeMaker:
 
         Parameters
         ----------
-        theme_name :
-
-        base16_vim_path :
+        theme_name : the name of your theme
+        vim: whether or not to produce a vim-file
+        shell: whether or not to produce a shell-file
+        base16_vim_path : the path to your base16-vim directory
             (Default value = "~/.config/nvim/plugged/base16-vim")
-        base16_shell_path :
+        base16_shell_path : the path to your base16-shell directory
             (Default value = "~/.config/base16-shell")
         """
 
         if not self.designations:
             raise ValueError("No colours designated")
 
-        with open("templates/vim.txt", "r") as file:
-            vim = file.read()
+        if not vim or shell:
+            raise ValueError("Must select at least one or 'shell' or 'vim'")
 
-        with open("templates/shell.txt", "r") as file:
-            shell = file.read()
+        if vim:
+            with open("templates/vim.txt", "r") as file:
+                vim = file.read()
+            vim = vim.replace("__theme_name__", theme_name)
 
-        shell = shell.replace("__theme__name__", theme_name)
-        vim = vim.replace("__theme_name__", theme_name)
+        if shell:
+            with open("templates/shell.txt", "r") as file:
+                shell = file.read()
+            shell = shell.replace("__theme__name__", theme_name)
 
         for label, code in self.designations.items():
 
             shell_hexcode = self._rgb_to_hex(*code, separator="/")
-            vim_hexcode = shell_hexcode.replace("/", "")
+            if shell:
+                shell = shell.replace(f"__{label}__", shell_hexcode)
 
-            shell = shell.replace(f"__{label}__", shell_hexcode)
-            vim = vim.replace(f"__{label}__", vim_hexcode)
-            vim = vim.replace(f"__hashed_{label}__", f"#{vim_hexcode}")
+            if vim:
+                vim_hexcode = shell_hexcode.replace("/", "")
+                vim = vim.replace(f"__{label}__", vim_hexcode)
+                vim = vim.replace(f"__hashed_{label}__", f"#{vim_hexcode}")
 
-        base16_vim_path = os.path.expanduser(base16_vim_path)
-        base16_shell_path = os.path.expanduser(base16_shell_path)
+        if vim:
+            base16_vim_path = os.path.expanduser(base16_vim_path)
+            with open(f"{base16_vim_path}/colors/base16-{theme_name}.vim", "w",) as file:
+                file.write(vim)
 
-        with open(f"{base16_vim_path}/colors/base16-{theme_name}.vim", "w",) as file:
-            file.write(vim)
-
-        with open(f"{base16_shell_path}/scripts/base16-{theme_name}.sh", "w") as file:
-            file.write(shell)
+        if shell:
+            base16_shell_path = os.path.expanduser(base16_shell_path)
+            with open(f"{base16_shell_path}/scripts/base16-{theme_name}.sh", "w") as file:
+                file.write(shell)
