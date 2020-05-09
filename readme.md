@@ -10,7 +10,7 @@ Here is how your terminal might look *before* the magic happens
 
 ![Before](/assets/before.png)
 
-![Walt](/assets/walt.jpg) ![Walt-Background](/assets/walt_theme.png)
-![Poppies](/assets/poppies.jpeg) ![Poppies-Background](/assets/poppies_theme.png)
-![Matrix](/assets/matrix.jpg) ![Matrix-Background](/assets/matrix_theme.png)
-![Flower](/assets/flower.jpg) ![Flower-Background](/assets/flower_theme.png)
+<img src="assets/walt.jpg" width="250" height="250"/> <img src="assets/walt_theme.png" width="250" height="250"/>
+<img src="assets/poppies.jpeg" width="250" height="250"/> <img src="assets/poppies_theme.png" width="250" height="250"/>
+<img src="assets/matrix.jpg" width="250" height="250"/> <img src="assets/matrix_theme.png" width="250" height="250"/>
+<img src="assets/flower.jpg" width="250" height="250"/> <img src="assets/flower_theme.png" width="250" height="250"/>
