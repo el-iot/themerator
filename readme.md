@@ -1,11 +1,11 @@
 <h1> Sweet16 </h1>
 A Base16 Theme-Generator for Shell and Vim <br>
-
+Generates .vim and .sh files and saves them to configurable destinations.
 
 This is not very functional right now and a work-in-progress. Can only currently be used in a python environment (Python > 3.6).
 
 <h1> Usage </h1>
-<a href="https://asciinema.org/a/e92tBmIIRPLs5TAqCZ2fjgfin" target="_blank"><img src="https://asciinema.org/a/e92tBmIIRPLs5TAqCZ2fjgfin.svg" /></a>
+![demo](./assets/demo.gif)
 
 <h1> Examples </h1>
 <h2> Before </h2>
@@ -26,5 +26,8 @@ Here are some example images and their corresponding themes
 </p>
 
 <h1> Relevant Projects </h1>
-* [Base16](https://github.com/chriskempson/base16)
-* [ColorThief-Python](https://github.com/fengsp/color-thief-py)
+
+<list>
+    <item>[Base16](https://github.com/chriskempson/base16) <br>
+    <item>[ColorThief-Python](https://github.com/fengsp/color-thief-py)
+</list>
