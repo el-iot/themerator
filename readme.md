@@ -5,7 +5,8 @@ Generates .vim and .sh files and saves them to configurable destinations.
 This is not very functional right now and a work-in-progress. Can only currently be used in a python environment (Python > 3.6).
 
 <h1> Usage </h1>
-![demo](./assets/demo.gif)
+
+![demo](/assets/demo.gif)
 
 <h1> Examples </h1>
 <h2> Before </h2>
@@ -28,6 +29,6 @@ Here are some example images and their corresponding themes
 <h1> Relevant Projects </h1>
 
 <list>
-    <item>[Base16](https://github.com/chriskempson/base16) <br>
-    <item>[ColorThief-Python](https://github.com/fengsp/color-thief-py)
+    <a href="https://github.com/chriskempson/base16">Base16</a> <br>
+    <a href="https://github.com/fengsp/color-thief-py">Color-Thief-Python</a>
 </list>
