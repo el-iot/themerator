@@ -9,12 +9,12 @@ from typing import Union
 import colorthief
 
 
-class ThemeMaker:
+class Theme:
     """
-    ThemeMaker Class
+    Theme Class
     """
 
-    def __init__(self, image_path: str, darkness_threshold=0, dominant_background=False):
+    def __init__(self, image_path: str, minimum_darkness=0, dominant_background=False):
         """
         Initialise the palette
 
@@ -22,7 +22,7 @@ class ThemeMaker:
         ----------
         image_path : the path to the image
 
-        darkness_threshold: the minimum darkness of any colour chosen from the image.
+        minimum_darkness: the minimum darkness of any colour chosen from the image.
         'Darkness' is defined as the average of the red, green and blue components of the colour.
 
         dominant_background (experimental): whether or not to use the dominant colour from the image
@@ -31,7 +31,7 @@ class ThemeMaker:
 
         """
         self.thief = colorthief.ColorThief(image_path)
-        self.palette = self.get_palette(dominant_background, darkness_threshold)
+        self.palette = self.get_palette(dominant_background, minimum_darkness)
         self.designations = self.assign_palette()
 
     @staticmethod
@@ -223,14 +223,14 @@ class ThemeMaker:
 
         return min([d - u for d in desired for u in undesired])
 
-    def get_palette(self, dominant_background, darkness_threshold) -> list:
+    def get_palette(self, dominant_background, minimum_darkness) -> list:
         """
         Get a palette from a path to an image
 
         Parameters
         ----------
         dominant_background : Whether or not to use the dominant colour from the image as the background colour
-        darkness_threshold: the minimum darkness of any colour chosen from the image.
+        minimum_darkness: the minimum darkness of any colour chosen from the image.
         'Darkness' is defined as the average of the red, green and blue components of the colour.
 
         Returns
@@ -240,7 +240,7 @@ class ThemeMaker:
         colours = [
             colour
             for colour in self.thief.get_palette(color_count=50, quality=1)
-            if sum(colour) / 3 > darkness_threshold
+            if sum(colour) / 3 > minimum_darkness
         ]
 
         palette = self.filter_palette(colours, dominant_background)
