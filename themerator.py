@@ -1,5 +1,5 @@
 """
-Sweet16
+Themerator
 A Base16 Theme-Generator for Shell and Vim
 """
 import math
