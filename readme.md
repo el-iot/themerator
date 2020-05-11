@@ -1,4 +1,4 @@
-<h1> Sweet16 </h1>
+<h1> Themerator </h1>
 A Base16 Theme-Generator for Shell and Vim <br>
 Generates .vim and .sh files and saves them to configurable destinations.
 
@@ -7,6 +7,17 @@ This is not very functional right now and a work-in-progress. Can only currently
 <h1> Usage </h1>
 
 ![demo](/assets/demo.gif)
+
+```
+$ ipython
+>>> from themerator import Theme
+>>> theme = theme({path to image})
+>>> theme.render() # previews the theme
+>>> theme.save(theme name)
+>>> exit()
+$ source ~/.zshrc
+$ base16_{theme name}
+```
 
 <h1> Examples </h1>
 <h2> Before </h2>
