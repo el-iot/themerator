@@ -288,23 +288,24 @@ class Theme:
             raise ValueError("Must select at least one or 'shell' or 'vim'")
 
         if vim:
-            with open("templates/vim.txt", "r") as file:
+            with open("assets/theme_templates/vim.txt", "r") as file:
                 vim = file.read()
             vim = vim.replace("__theme_name__", theme_name)
 
         if shell:
-            with open("templates/shell.txt", "r") as file:
+            with open("assets/theme_templates/shell.txt", "r") as file:
                 shell = file.read()
             shell = shell.replace("__theme__name__", theme_name)
 
         for label, code in self.designations.items():
 
-            shell_hexcode = self._rgb_to_hex(*code, separator="/")
+            hexcode = self._rgb_to_hex(*code, separator="/")
+
             if shell:
-                shell = shell.replace(f"__{label}__", shell_hexcode)
+                shell = shell.replace(f"__{label}__", hexcode)
 
             if vim:
-                vim_hexcode = shell_hexcode.replace("/", "")
+                vim_hexcode = hexcode.replace("/", "")
                 vim = vim.replace(f"__{label}__", vim_hexcode)
                 vim = vim.replace(f"__hashed_{label}__", f"#{vim_hexcode}")
 
