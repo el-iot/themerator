@@ -7,6 +7,7 @@ import os
 from typing import Union
 
 import colorthief
+import structlog
 
 
 class Theme:
@@ -14,42 +15,22 @@ class Theme:
     Theme Class
     """
 
-    def __init__(self, image_path: str, minimum_darkness=0, dominant_background=False):
+    def __init__(
+        self, image_path: str, dark: bool = True, darkness_boundaries: Union[list, None] = None,
+    ):
         """
         Initialise the palette
-
-        Parameters
-        ----------
-        image_path : the path to the image
-
-        minimum_darkness: the minimum darkness of any colour chosen from the image.
-        'Darkness' is defined as the average of the red, green and blue components of the colour.
-
-        dominant_background (experimental): whether or not to use the dominant colour from the image
-        as the background colour of the theme
-            (Default value = "")
-
         """
+        self.logger = structlog.get_logger(name="themerator")
         self.thief = colorthief.ColorThief(image_path)
-        self.palette = self.get_palette(dominant_background, minimum_darkness)
+        self.dark = dark
+        self.palette = self.get_palette(darkness_boundaries)
         self.designations = self.assign_palette()
 
     @staticmethod
     def _rgb_to_hex(red, green, blue, separator="") -> str:
         """
         Convert an RGB-defined colour to a hex-defined colour with a given separator
-
-        Parameters
-        ----------
-        red : the red-value in the colour; [0, 256)
-        green : the green-value in the colour; [0, 256)
-        blue : the blue-value in the colour; [0, 256)
-        separator : the separator for each hex-component
-            (Default value = "")
-
-        Returns
-        -------
-        The hexcode for the colour
         """
         for colour in [red, green, blue]:
             assert isinstance(colour, (int, float)) and 0 <= colour < 256
@@ -71,23 +52,12 @@ class Theme:
         hexint = int(colour, 16)
         print(f"\x1B[38;2;{hexint>>16};{hexint>>8&0xFF};{hexint&0xFF}m{text}\x1B[0m")
 
-    def filter_palette(self, colours: list, dominant_background: bool, max_retries=50) -> list:
+    def filter_palette(self, colours: list, max_retries=50) -> list:
         """
         Filter a palette down so it has atleast 16 colours that are as distinct as possible
-
-        Parameters
-        ----------
-        colours : a list of colours
-        dominant_background : whether or not to use the dominant colour from the image as the background colour for the theme
-        max_retries : the number of binary-search iterations to perform before concluding that no distinct colours can be found.
-            (Default value = 50)
-
-        Returns
-        -------
-        A list of chosen colours
         """
 
-        colours = sorted(colours, key=lambda x: sum(x))
+        colours = sorted(colours, key=lambda x: sum(x) * (1 if self.dark else -1))
         left, right = 0, 1
 
         for _ in range(max_retries):
@@ -103,20 +73,12 @@ class Theme:
             else:
                 return candidates
 
-        raise RecursionError(f"cannot find sufficiently dissimilar colours; cannot filter")
+        self.logger.warning(f"only found distinct {len(candidates)} colours")
+        return candidates
 
     def get_similarity(self, c1, c2) -> float:
         """
         Get the similarity between colours
-
-        Parameters
-        ----------
-        c1 : the first RGB-colour
-        c2 : the second RGB-colour
-
-        Returns
-        -------
-        The percentage similarity between the two colours
         """
         return 1 - math.sqrt(sum([(a - b) ** 2 for a, b in zip(c1, c2)])) / math.sqrt(
             sum([255 ** 2 for _ in range(3)])
@@ -125,30 +87,32 @@ class Theme:
     def filter_by_similarity(self, colours, similarity_threshold) -> list:
         """
         Filter colours down by similarity
-
-        Parameters
-        ----------
-        colours : the list of colours to be filtered
-        similarity_threshold : the maximum-allowable-similarity between any two colours
-
-        Returns
-        -------
-        A filtered list of colours
         """
-        chosen = [self.dominant_colour] if hasattr(self, "dominant_colour") else []
+        if not colours:
+            return []
+
+        colours = colours.copy()
+        background = colours.pop(0)
+        chosen = [background]
 
         for colour in colours:
-            if chosen and any(
-                self.get_similarity(colour, choice) > similarity_threshold for choice in chosen
+
+            if (
+                chosen
+                and any(
+                    self.get_similarity(colour, choice) > similarity_threshold for choice in chosen
+                )
+                or (255 - abs(sum(colour) - sum(background)) / 3) / 255 > similarity_threshold
             ):
                 continue
+
             chosen.append(colour)
 
         return chosen
 
     def assign_palette(self) -> dict:
         """
-        Designate 16 colours in a palette to a Base16 colour number
+        Designate up to 16 colours in a palette to a Base16 colour number
         """
 
         palette = self.palette.copy()
@@ -164,49 +128,60 @@ class Theme:
             "yellow": lambda colour: self.prominence(colour, ["red", "green"]),
         }
 
-        order = [
-            ("color00", "dark"),  # background
-            ("color07", "light"),  # foreground
-            ("color01", "red"),  # red
-            ("color02", "green"),  # green
-            ("color04", "blue"),  # blue
-            ("color03", "yellow"),  # yellow
-            ("color05", "magenta"),  # magenta
-            ("color06", "cyan"),  # cyan
-            ("color18", "dark"),  # ?
-            ("color19", "dark"),  # ?
-            ("color20", "dark"),  # ?
-            ("color21", "dark"),  # ?
-            ("color15", "dark"),  # ?
-            ("color16", "dark"),  # ?
-            ("color17", "dark"),  # ?
-            ("color08", "dark"),  # ?
-        ]
+        order = {
+            "dark": [
+                ("color00", "dark"),  # background
+                ("color07", "light"),  # foreground
+                ("color01", "red"),  # red
+                ("color02", "green"),  # green
+                ("color04", "blue"),  # blue
+                ("color03", "yellow"),  # yellow
+                ("color05", "magenta"),  # magenta
+                ("color06", "cyan"),  # cyan
+                ("color18", "dark"),  # ?
+                ("color19", "dark"),  # ?
+                ("color20", "dark"),  # ?
+                ("color21", "dark"),  # ?
+                ("color15", "dark"),  # ?
+                ("color16", "dark"),  # ?
+                ("color17", "dark"),  # ?
+                ("color08", "dark"),  # ?
+            ],
+            "light": [
+                ("color00", "light"),  # background
+                ("color07", "dark"),  # foreground
+                ("color01", "red"),  # red
+                ("color02", "green"),  # green
+                ("color04", "blue"),  # blue
+                ("color03", "yellow"),  # yellow
+                ("color05", "magenta"),  # magenta
+                ("color06", "cyan"),  # cyan
+                ("color18", "light"),  # ?
+                ("color19", "light"),  # ?
+                ("color20", "light"),  # ?
+                ("color21", "light"),  # ?
+                ("color15", "light"),  # ?
+                ("color16", "light"),  # ?
+                ("color17", "light"),  # ?
+                ("color08", "light"),  # ?
+            ],
+        }
 
         designations = {}
 
-        for label, metric_name in order:
+        tone = "dark" if self.dark else "light"
 
-            if label == "color00" and hasattr(self, "dominant_colour"):
-                designations[label] = self.dominant_colour
-            else:
-                palette = sorted(palette, key=metrics[metric_name])
-                designations[label] = palette.pop()
+        for label, metric_name in order[tone]:
+
+            palette = sorted(palette, key=metrics[metric_name])
+            choice = palette.pop() if palette else choice
+            designations[label] = choice
 
         return designations
 
     def prominence(self, rgb, highlights) -> int:
         """
         Score a colour based on the prominence of highlights
-
-        Parameters
-        ----------
-        rgb : tuple: the chosen colour
-        highlights : list : which primary colours are desired
-
-        Returns
-        -------
-        An integer
         """
         if not isinstance(highlights, list):
             highlights = [highlights]
@@ -223,38 +198,34 @@ class Theme:
 
         return min([d - u for d in desired for u in undesired])
 
-    def get_palette(self, dominant_background, minimum_darkness) -> list:
+    def get_palette(self, darkness_boundaries) -> list:
         """
         Get a palette from a path to an image
-
-        Parameters
-        ----------
-        dominant_background : Whether or not to use the dominant colour from the image as the background colour
-        minimum_darkness: the minimum darkness of any colour chosen from the image.
-        'Darkness' is defined as the average of the red, green and blue components of the colour.
-
-        Returns
-        -------
-        A filtered list of colours
         """
+        if darkness_boundaries is None:
+            if self.dark:
+                darkness_boundaries = [25, None]
+            else:
+                darkness_boundaries = [None, 225]
+
+        [lower_bound, upper_bound] = darkness_boundaries
+
         colours = [
             colour
             for colour in self.thief.get_palette(color_count=50, quality=1)
-            if sum(colour) / 3 > minimum_darkness
+            if (
+                (lower_bound is None or sum(colour) / 3 > lower_bound)
+                and (upper_bound is None or sum(colour) / 3 < upper_bound)
+            )
         ]
 
-        palette = self.filter_palette(colours, dominant_background)
+        palette = self.filter_palette(colours)
 
         return palette
 
     def render(self, sort=lambda x: sum(x)) -> None:
         """
         Render every colour in palette
-
-        Parameters
-        ----------
-        sort : the metric by which to sort the colours
-            (Default value = lambda x: sum(x))
         """
         for colour in sorted(self.palette, key=sort):
             self._render(colour)
