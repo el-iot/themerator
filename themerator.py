@@ -73,7 +73,10 @@ class Theme:
             else:
                 return candidates
 
-        self.logger.warning(f"only found distinct {len(candidates)} colours")
+        if n < 8:
+            raise ValueError(f"can only find {n} (< 8) distinct colours")
+
+        self.logger.warning(f"only found distinct {n} colours")
         return candidates
 
     def get_similarity(self, c1, c2) -> float:
@@ -167,15 +170,41 @@ class Theme:
             ],
         }
 
+        reuse_palette = {
+            "color08": (
+                ["color01", "color02", "color03", "color04", "color05", "color06"],
+                "dark",
+            ),
+            "color18": (
+                ["color01", "color02", "color03", "color04", "color05", "color06"],
+                "light",
+            ),
+            "color19": ["color04"],
+            "color20": ["color07"],
+            "color21": ["color00"],
+            "color15": ["color01"],
+            "color16": ["color06"],
+            "color17": ["color02"],
+        }
+
         designations = {}
 
         tone = "dark" if self.dark else "light"
 
+        def get_preference(options, metric_name=None):
+
+            if metric_name is None:
+                return designations[options]
+
+            return sorted([designations[option] for option in options], key=metrics[metric_name])[0]
+
         for label, metric_name in order[tone]:
 
             palette = sorted(palette, key=metrics[metric_name])
-            choice = palette.pop() if palette else choice
-            designations[label] = choice
+            if palette:
+                designations[label] = palette.pop()
+            else:
+                designations[label] = get_preference(*reuse_palette[label])
 
         return designations
 
