@@ -26,6 +26,7 @@ class Theme:
         self.dark = dark
         self.palette = self.get_palette(darkness_boundaries)
         self.designations = self.assign_palette()
+        self.render()
 
     @staticmethod
     def _rgb_to_hex(red, green, blue, separator="") -> str:
@@ -44,7 +45,10 @@ class Theme:
         Render helper
         """
         if text is None:
-            text = f"█████ {colour}"
+
+            text = str(colour)
+
+        text = "█████" + text
 
         if isinstance(colour, tuple):
             colour = self._rgb_to_hex(*colour).upper()
@@ -98,6 +102,10 @@ class Theme:
         background = colours.pop(0)
         chosen = [background]
 
+        background_similarity_threshold = max(
+            1 - (1 - similarity_threshold) * 2, similarity_threshold
+        )
+
         for colour in colours:
 
             if (
@@ -105,7 +113,8 @@ class Theme:
                 and any(
                     self.get_similarity(colour, choice) > similarity_threshold for choice in chosen
                 )
-                or (255 - abs(sum(colour) - sum(background)) / 3) / 255 > similarity_threshold
+                or (255 - abs(sum(colour) - sum(background)) / 3) / 255
+                > background_similarity_threshold
             ):
                 continue
 
@@ -232,6 +241,7 @@ class Theme:
         Get a palette from a path to an image
         """
         if darkness_boundaries is None:
+
             if self.dark:
                 darkness_boundaries = [25, None]
             else:
@@ -256,8 +266,8 @@ class Theme:
         """
         Render every colour in palette
         """
-        for colour in sorted(self.palette, key=sort):
-            self._render(colour)
+        for name, colour in self.designations.items():
+            self._render(colour, text=f"{colour} -> {name}")
 
     def save(
         self,
