@@ -16,15 +16,21 @@ class Theme:
     """
 
     def __init__(
-        self, image_path: str, dark: bool = True, darkness_boundaries: Union[list, None] = None,
+        self, image_path: str,
     ):
         """
         Initialise the palette
         """
         self.logger = structlog.get_logger(name="themerator")
         self.thief = colorthief.ColorThief(image_path)
+        self.designations = None
+
+    def create(self, dark=False, contrast=50):
+        """
+        Designate
+        """
         self.dark = dark
-        self.palette = self.get_palette(darkness_boundaries)
+        self.palette = self.get_palette(dark, contrast)
         self.designations = self.assign_palette()
         self.render()
 
@@ -80,7 +86,9 @@ class Theme:
         if n < 8:
             raise ValueError(f"can only find {n} (< 8) distinct colours")
 
-        self.logger.warning(f"only found distinct {n} colours")
+        if n < 16:
+            self.logger.warning(f"only found distinct {n} colours")
+
         return candidates
 
     def get_similarity(self, c1, c2) -> float:
@@ -103,7 +111,7 @@ class Theme:
         chosen = [background]
 
         background_similarity_threshold = max(
-            1 - (1 - similarity_threshold) * 2, similarity_threshold
+            1 - (1 - similarity_threshold) * 3, similarity_threshold
         )
 
         for colour in colours:
@@ -236,16 +244,17 @@ class Theme:
 
         return min([d - u for d in desired for u in undesired])
 
-    def get_palette(self, darkness_boundaries) -> list:
+    def get_palette(self, dark, contrast) -> list:
         """
         Get a palette from a path to an image
         """
-        if darkness_boundaries is None:
 
-            if self.dark:
-                darkness_boundaries = [25, None]
-            else:
-                darkness_boundaries = [None, 225]
+        boundary = 255 - 255 * (contrast / 100)
+
+        if dark:
+            darkness_boundaries = [boundary, None]
+        else:
+            darkness_boundaries = [None, 255 - boundary]
 
         [lower_bound, upper_bound] = darkness_boundaries
 
@@ -266,6 +275,9 @@ class Theme:
         """
         Render every colour in palette
         """
+        if self.designations is None:
+            raise ValueError("must designate first")
+
         for name, colour in self.designations.items():
             self._render(colour, text=f"{colour} -> {name}")
 
