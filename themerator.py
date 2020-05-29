@@ -39,11 +39,7 @@ class Theme:
         """
         Convert an RGB-defined colour to a hex-defined colour with a given separator
         """
-        for colour in [red, green, blue]:
-            assert isinstance(colour, (int, float)) and 0 <= colour < 256
-
         _pad = lambda x: "0" * (2 - len(x)) + x
-
         return separator.join(_pad(hex(colour)[2:]) for colour in [red, green, blue])
 
     def _render(self, colour: Union[tuple, str], text=None) -> None:
