@@ -25,7 +25,7 @@ class Theme:
         self.thief = colorthief.ColorThief(image_path)
         self.designations = None
 
-    def create(self, dark=False, contrast=50):
+    def create(self, dark=True, contrast=100):
         """
         Designate
         """
@@ -110,9 +110,7 @@ class Theme:
         background = colours.pop(0)
         chosen = [background]
 
-        background_similarity_threshold = max(
-            1 - (1 - similarity_threshold) * 3, similarity_threshold
-        )
+        background_similarity_threshold = similarity_threshold**3
 
         for colour in colours:
 
@@ -252,19 +250,16 @@ class Theme:
         boundary = 255 - 255 * (contrast / 100)
 
         if dark:
-            darkness_boundaries = [boundary, None]
+            darkness_boundaries = [boundary, 255]
         else:
-            darkness_boundaries = [None, 255 - boundary]
+            darkness_boundaries = [0, 255 - boundary]
 
         [lower_bound, upper_bound] = darkness_boundaries
 
         colours = [
             colour
             for colour in self.thief.get_palette(color_count=50, quality=1)
-            if (
-                (lower_bound is None or sum(colour) / 3 > lower_bound)
-                and (upper_bound is None or sum(colour) / 3 < upper_bound)
-            )
+            if (sum(colour) / 3 > lower_bound and sum(colour) / 3 < upper_bound)
         ]
 
         palette = self.filter_palette(colours)
