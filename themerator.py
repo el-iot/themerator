@@ -1,6 +1,6 @@
 """
 Themerator
-A Base16 Theme-Generator for Shell and Vim
+A Theme-Generator for Base16-Shell and Base16-Vim
 """
 import math
 import os
@@ -47,11 +47,9 @@ class Theme:
         Render helper
         """
         if text is None:
-
             text = str(colour)
 
         text = "█████" + text
-
         if isinstance(colour, tuple):
             colour = self._rgb_to_hex(*colour).upper()
 
@@ -62,7 +60,6 @@ class Theme:
         """
         Filter a palette down so it has atleast 16 colours that are as distinct as possible
         """
-
         colours = sorted(colours, key=lambda x: sum(x) * (1 if self.dark else -1))
         left, right = 0, 1
 
@@ -203,7 +200,9 @@ class Theme:
         tone = "dark" if self.dark else "light"
 
         def get_preference(options, metric_name=None):
-
+            """
+            Get reuse preferences
+            """
             if metric_name is None:
                 return designations[options]
 
