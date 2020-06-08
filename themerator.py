@@ -25,11 +25,12 @@ class Theme:
         self.thief = colorthief.ColorThief(image_path)
         self.designations = None
 
-    def create(self, dark=True, contrast=100):
+    def create(self, use_dominant=False, dark=True, contrast=100):
         """
-        Designate
+        Create a theme
         """
         self.dark = dark
+        self.use_dominant = use_dominant
         self.palette = self.get_palette(dark, contrast)
         self.designations = self.assign_palette()
         self.render()
@@ -242,19 +243,23 @@ class Theme:
         Get a palette from a path to an image
         """
 
-        boundary = 255 - 255 * (contrast / 100)
+        if self.use_dominant:
+            dominant_colour = self.thief.get_color()
+            boundary = sum(dominant_colour) / 3
+        else:
+            boundary = 255 - 255 * (contrast / 100)
 
         if dark:
             darkness_boundaries = [boundary, 255]
         else:
-            darkness_boundaries = [0, 255 - boundary]
+            darkness_boundaries = [0, boundary if self.use_dominant else (255 - boundary)]
 
         [lower_bound, upper_bound] = darkness_boundaries
 
         colours = [
             colour
             for colour in self.thief.get_palette(color_count=50, quality=1)
-            if (sum(colour) / 3 > lower_bound and sum(colour) / 3 < upper_bound)
+            if (sum(colour) / 3 >= lower_bound and sum(colour) / 3 <= upper_bound)
         ]
 
         palette = self.filter_palette(colours)
