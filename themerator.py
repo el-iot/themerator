@@ -25,13 +25,11 @@ class Theme:
         self.thief = colorthief.ColorThief(image_path)
         self.designations = None
 
-    def create(self, use_dominant=False, dark=True, contrast=100):
+    def create(self, variant=None, intensity=100):
         """
         Create a theme
         """
-        self.dark = dark
-        self.use_dominant = use_dominant
-        self.palette = self.get_palette(dark, contrast)
+        self.palette = self.get_palette(variant, intensity)
         self.designations = self.assign_palette()
         self.render()
 
@@ -51,6 +49,7 @@ class Theme:
             text = str(colour)
 
         text = "█████" + text
+
         if isinstance(colour, tuple):
             colour = self._rgb_to_hex(*colour).upper()
 
@@ -104,7 +103,7 @@ class Theme:
         background = colours.pop(0)
         chosen = [background]
 
-        background_similarity_threshold = similarity_threshold**3
+        background_similarity_threshold = similarity_threshold ** 4
 
         for colour in colours:
 
@@ -238,27 +237,37 @@ class Theme:
 
         return min([d - u for d in desired for u in undesired])
 
-    def get_palette(self, dark, contrast) -> list:
+    def get_palette(self, variant, intensity) -> list:
         """
         Get a palette from a path to an image
         """
+        dominant_colour = self.thief.get_color(
+            quality=1
+        )
 
-        if self.use_dominant:
-            dominant_colour = self.thief.get_color()
-            boundary = sum(dominant_colour) / 3
-        else:
-            boundary = 255 - 255 * (contrast / 100)
+        if variant is None:
 
-        if dark:
-            darkness_boundaries = [boundary, 255]
+            background = sum(dominant_colour) / 3
+            dark = background < (255 / 2)
+
+            if dark:
+                darkness_boundaries = [background, 255 * (intensity / 100)]
+            else:
+                darkness_boundaries = [255 * (1 - intensity / 100), background]
+
+        elif variant == "dark":
+            darkness_boundaries = [255 * (1 - intensity / 100), 255]
+
         else:
-            darkness_boundaries = [0, boundary if self.use_dominant else (255 - boundary)]
+            darkness_boundaries = [0, 255 * (intensity / 100)]
+
+        self.dark = variant == "dark" or (variant is None and dark)
 
         [lower_bound, upper_bound] = darkness_boundaries
 
         colours = [
             colour
-            for colour in self.thief.get_palette(color_count=50, quality=1)
+            for colour in [dominant_colour] + self.thief.get_palette(color_count=50, quality=1)
             if (sum(colour) / 3 >= lower_bound and sum(colour) / 3 <= upper_bound)
         ]
 
