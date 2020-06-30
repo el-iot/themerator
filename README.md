@@ -1,17 +1,22 @@
 ```
-                                  gg
-                                  ""
- _                    _  __       gg    ,ggg,,ggg,,ggg,     ,gggg,gg    ,gggg,gg   ,ggg,    ,ggg,,ggg,
-| |__   __ _ ___  ___/ |/ /_      88   ,8" "8P" "8P" "8,   dP"  "Y8I   dP"  "Y8I  i8" "8i  ,8" "8P" "8,
-| '_ \ / _` / __|/ _ \ | '_ \     88   I8   8I   8I   8I  i8'    ,8I  i8'    ,8I  I8, ,8I  I8   8I   8I
-| |_) | (_| \__ \  __/ | (_) |  _,88,_,dP   8I   8I   Yb,,d8,   ,d8b,,d8,   ,d8I  `YbadP' ,dP   8I   Yb,
-|_.__/ \__,_|___/\___|_|\___/   8P""Y88P'   8I   8I   `Y8P"Y8888P"`Y8P"Y8888P"888888P"Y8888P'   8I   `Y8
-                                                              ,d8I'
-                                                            ,dP'8I
-                                                           ,8"  8I
-                                                           I8   8I
-                                                           `8, ,8I
-                                                            `Y8P"
+                                             _                    _  __
+                                            | |__   __ _ ___  ___/ |/ /_
+                                            | '_ \ / _` / __|/ _ \ | '_ \
+                                            | |_) | (_| \__ \  __/ | (_) |
+                                            |_.__/ \__,_|___/\___|_|\___/
+    gg
+    ""
+    gg    ,ggg,,ggg,,ggg,     ,gggg,gg    ,gggg,gg   ,ggg,    ,ggg,,ggg,
+    88   ,8" "8P" "8P" "8,   dP"  "Y8I   dP"  "Y8I  i8" "8i  ,8" "8P" "8,
+    88   I8   8I   8I   8I  i8'    ,8I  i8'    ,8I  I8, ,8I  I8   8I   8I
+  _,88,_,dP   8I   8I   Yb,,d8,   ,d8b,,d8,   ,d8I  `YbadP' ,dP   8I   Yb,
+  8P""Y88P'   8I   8I   `Y8P"Y8888P"`Y8P"Y8888P"888888P"Y8888P'   8I   `Y8
+                                             ,d8I'
+                                           ,dP'8I
+                                          ,8"  8I
+                                          I8   8I
+                                          `8, ,8I
+                                           `Y8P"
 ```
 <h1>base16-imagen</h1>
 A python script that generates base16 themes based on given images.
@@ -39,6 +44,7 @@ $ ls
 
 <h2>Examples</h2>
 Here are some of my favourite images and the corresponding themes they generate
+# TODO: add examples
 
 <h2> Relevant Projects </h2>
 
