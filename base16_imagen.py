@@ -6,6 +6,33 @@ import colorthief
 import structlog
 
 
+class ThemeMaker:
+    """
+    ThemeMaker class
+    """
+
+    def __init__(
+        self, image_path: str,
+    ):
+        """
+        Initialise the palette
+        """
+        self.logger = structlog.get_logger(name="theme-maker")
+        self.thief = colorthief.ColorThief(image_path)
+
+        self.logger.info(f"Getting colours from image ({image_path})")
+
+        self.colours = [self.thief.get_color(1)] + [
+            *self.thief.get_palette(color_count=50, quality=1)
+        ]
+
+    def create_theme(self, name: str, variant: str = "", intensity: int = 100) -> Theme:
+        """
+        Create a theme
+        """
+        return Theme(name, self.colours, variant, intensity)
+
+
 class Theme:
     """
     Theme class
@@ -183,8 +210,8 @@ class Theme:
 
     def save(
         self,
-        vim: bool = True,
-        shell: bool = True,
+        vim: bool = False,
+        shell: bool = False,
         vim_path: str = ".",
         shell_path: str = ".",
     ) -> None:
@@ -227,9 +254,7 @@ class Theme:
                 f"__hashed_{label}__", f"#{hexcode}"
             )
 
-        with open(
-            f"{os.path.expanduser(path)}/{self.name}.vim", "w",
-        ) as file:
+        with open(f"{os.path.expanduser(path)}/{self.name}.vim", "w",) as file:
             file.write(vim_file)
 
     def _save_shell(self, path: str) -> None:
@@ -246,9 +271,7 @@ class Theme:
             hexcode = self._rgb_to_hex(*code, separator="/")
             shell_file = shell_file.replace(f"__{label}__", hexcode)
 
-        with open(
-            f"{os.path.expanduser(path)}/{self.name}.sh", "w"
-        ) as file:
+        with open(f"{os.path.expanduser(path)}/{self.name}.sh", "w") as file:
             file.write(shell_file)
 
     def generate_palette(self, colours: List, variant: str, intensity: int) -> list:
@@ -352,30 +375,3 @@ class Theme:
             chosen.append(colour)
 
         return chosen
-
-
-class ThemeMaker:
-    """
-    ThemeMaker class
-    """
-
-    def __init__(
-        self, image_path: str,
-    ):
-        """
-        Initialise the palette
-        """
-        self.logger = structlog.get_logger(name="theme-maker")
-        self.thief = colorthief.ColorThief(image_path)
-
-        self.logger.info(f"Getting colours from image ({image_path})")
-
-        self.colours = [self.thief.get_color(1)] + [
-            *self.thief.get_palette(color_count=50, quality=1)
-        ]
-
-    def create_theme(self, name: str, variant: str = "", intensity: int = 100) -> Theme:
-        """
-        Create a theme
-        """
-        return Theme(name, self.colours, variant, intensity)
