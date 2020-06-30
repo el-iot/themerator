@@ -228,7 +228,7 @@ class Theme:
             )
 
         with open(
-            f"{os.path.expanduser(path)}/colors/base16-{self.name}.vim", "w",
+            f"{os.path.expanduser(path)}/{self.name}.vim", "w",
         ) as file:
             file.write(vim_file)
 
@@ -247,7 +247,7 @@ class Theme:
             shell_file = shell_file.replace(f"__{label}__", hexcode)
 
         with open(
-            f"{os.path.expanduser(path)}/scripts/base16-{self.name}.sh", "w"
+            f"{os.path.expanduser(path)}/{self.name}.sh", "w"
         ) as file:
             file.write(shell_file)
 
