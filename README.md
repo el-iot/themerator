@@ -38,13 +38,21 @@ Currently this package only runs inside a python (>3) environment. If there is s
     {theme will render}
 >>> theme.save() # not providing paths will save the themes to your current directory
 >>> exit()
+```
+
+```zsh
 $ ls
-  base16_my-theme.sh
-  base16_my-theme.vim
+  my-theme.sh
+  my-theme.vim
+$ mv my-theme.sh ~/.config/base16-shell/scripts/              # this is where my shell themes are
+$ mv my-theme.vim  ~/.config/nvim/plugged/base16-vim/colors/  # this is where my vim themes are
+$ source ~/.zshrc                                             # or start a new terminal session
+$ my-theme
+{viola!}
 ```
 
 <h2>Examples</h2>
-Here are some of my favourite images and the corresponding themes they generate
+Here are some of my favourite images and the corresponding themes they generate <br>
 # TODO: add examples
 
 <h2> Relevant Projects </h2>
