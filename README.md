@@ -1,45 +1,48 @@
-<h1> Themerator </h1>
-A Base16 Theme-Generator for Shell and Vim <br>
-Generates .vim and .sh files and saves them to configurable destinations.
-
-This is not very functional right now and a work-in-progress. Can only currently be used in a python environment (Python > 3.6).
-
-<h1> Usage </h1>
-
-![demo](/assets/demo.gif)
-
 ```
-$ ipython
->>> from themerator import Theme
->>> theme = theme({path to image})
->>> theme.render() # previews the theme
->>> theme.save(theme name)
+                                  gg
+                                  ""
+ _                    _  __       gg    ,ggg,,ggg,,ggg,     ,gggg,gg    ,gggg,gg   ,ggg,    ,ggg,,ggg,
+| |__   __ _ ___  ___/ |/ /_      88   ,8" "8P" "8P" "8,   dP"  "Y8I   dP"  "Y8I  i8" "8i  ,8" "8P" "8,
+| '_ \ / _` / __|/ _ \ | '_ \     88   I8   8I   8I   8I  i8'    ,8I  i8'    ,8I  I8, ,8I  I8   8I   8I
+| |_) | (_| \__ \  __/ | (_) |  _,88,_,dP   8I   8I   Yb,,d8,   ,d8b,,d8,   ,d8I  `YbadP' ,dP   8I   Yb,
+|_.__/ \__,_|___/\___|_|\___/   8P""Y88P'   8I   8I   `Y8P"Y8888P"`Y8P"Y8888P"888888P"Y8888P'   8I   `Y8
+                                                              ,d8I'
+                                                            ,dP'8I
+                                                           ,8"  8I
+                                                           I8   8I
+                                                           `8, ,8I
+                                                            `Y8P"
+```
+<h1>base16-imagen</h1>
+A python script that generates base16 themes based on given images.
+Currently only generates base16 themes for <a href='https://github.com/chriskempson/base16-shell'>shell</a> and <a href='https://github.com/chriskempson/base16-vim'>vim</a> (but creating more should be easy enough). <br>
+
+Generates .vim and .sh files and optionally saves them to configurable destinations.
+
+<h2>Why?</h2>
+I personally love <a href='https://github.com/chriskempson/base16'>base16</a>: I am always working at a terminal and being able to change my theme quickly and easily is a great way to stay engaged. With that being said, sometimes I find myself modifying themes manually in the interest of creating new and interesting ones. This gets a bit tricky once you start needing to synchronise changes made to base16-vim and base16-shell files. The purpose of this project is to generate themes from your favourite images that are (hopefully) very palettable and make reading text at terminal easy and engaging.
+
+<h2>Usage</h2>
+Currently this package only runs inside a python (>3) environment. If there is sufficient interest it could be expanded to run as a shell-script.
+
+```python
+>>> from base16_imagen import ThemeMaker
+>>> maker = ThemeMaker({some path to an image})
+>>> theme = maker.create_theme('my-theme', variant='dark')
+    {theme will render}
+>>> theme.save() # not providing paths will save the themes to your current directory
 >>> exit()
-$ source ~/.zshrc
-$ base16_{theme name}
+$ ls
+  base16_my-theme.sh
+  base16_my-theme.vim
 ```
 
-<h1> Examples </h1>
-<h2> Before </h2>
+<h2>Examples</h2>
+Here are some of my favourite images and the corresponding themes they generate
 
-Here is how your terminal might look *before* the magic happens
-
-![Before](/assets/before.png)
-
-<h2> After </h2>
-
-Here are some example images and their corresponding themes
-
-<p align="center">
-    <img src="assets/walt.jpg" width="320" height="320"/> <img src="assets/walt_theme.png" width="480" height="320"/><br>
-    <img src="assets/poppies.jpeg" width="320" height="320"/> <img src="assets/poppies_theme.png" width="480" height="320"/><br>
-    <img src="assets/matrix.jpg" width="320" height="320"/> <img src="assets/matrix_theme.png" width="480" height="320"/><br>
-    <img src="assets/flower.jpg" width="320" height="320"/> <img src="assets/flower_theme.png" width="480" height="320"/><br>
-</p>
-
-<h1> Relevant Projects </h1>
+<h2> Relevant Projects </h2>
 
 <list>
-    <a href="https://github.com/chriskempson/base16">Base16</a> <br>
+    <a href="https://github.com/chriskempson/base16">Base16</a><br>
     <a href="https://github.com/fengsp/color-thief-py">Color-Thief-Python</a>
 </list>
