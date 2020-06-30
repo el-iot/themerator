@@ -1,9 +1,9 @@
 ```
-                                             _                    _  __
-                                            | |__   __ _ ___  ___/ |/ /_
-                                            | '_ \ / _` / __|/ _ \ | '_ \
-                                            | |_) | (_| \__ \  __/ | (_) |
-                                            |_.__/ \__,_|___/\___|_|\___/
+                                              _                    _  __
+                                             | |__   __ _ ___  ___/ |/ /_
+                                             | '_ \ / _` / __|/ _ \ | '_ \
+                                             | |_) | (_| \__ \  __/ | (_) |
+                                             |_.__/ \__,_|___/\___|_|\___/
     gg
     ""
     gg    ,ggg,,ggg,,ggg,     ,gggg,gg    ,gggg,gg   ,ggg,    ,ggg,,ggg,
@@ -53,7 +53,8 @@ $ my-theme
 
 <h2>Examples</h2>
 Here are some of my favourite images and the corresponding themes they generate <br>
-# TODO: add examples
+
+TODO: add examples
 
 <h2> Relevant Projects </h2>
 
