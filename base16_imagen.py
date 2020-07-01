@@ -5,46 +5,17 @@ from typing import Callable, Dict, List, Tuple, Union
 import colorthief
 import structlog
 
-
-class ThemeMaker:
-    """
-    ThemeMaker class
-    """
-
-    def __init__(
-        self, image_path: str,
-    ):
-        """
-        Initialise the palette
-        """
-        self.logger = structlog.get_logger(name="theme-maker")
-        self.thief = colorthief.ColorThief(image_path)
-
-        self.logger.info(f"Getting colours from image ({image_path})")
-
-        self.colours = [self.thief.get_color(1)] + [
-            *self.thief.get_palette(color_count=50, quality=1)
-        ]
-
-    def create_theme(self, name: str, variant: str = "", intensity: int = 100) -> Theme:
-        """
-        Create a theme
-        """
-        return Theme(name, self.colours, variant, intensity)
-
-
 class Theme:
     """
     Theme class
     """
-
     def __init__(self, name: str, colours: List, variant: str, intensity: int) -> None:
         """
         Initialise a theme
         """
         self.name = name
-        self.generate_designations(colours, variant, intensity)
         self.logger = structlog.getLogger(f"{self.name}-theme")
+        self.generate_designations(colours, variant, intensity)
         self.render()
 
     def _render(self, colour: Union[tuple, str], text: str = None) -> None:
@@ -375,3 +346,29 @@ class Theme:
             chosen.append(colour)
 
         return chosen
+
+class ThemeMaker:
+    """
+    ThemeMaker class
+    """
+
+    def __init__(
+        self, image_path: str,
+    ):
+        """
+        Initialise the palette
+        """
+        self.logger = structlog.get_logger(name="theme-maker")
+        self.thief = colorthief.ColorThief(image_path)
+
+        self.logger.info(f"Getting colours from image ({image_path})")
+
+        self.colours = [self.thief.get_color(1)] + [
+            *self.thief.get_palette(color_count=50, quality=1)
+        ]
+
+    def create_theme(self, name: str, variant: str = "", intensity: int = 100) -> Theme:
+        """
+        Create a theme
+        """
+        return Theme(name, self.colours, variant, intensity)
