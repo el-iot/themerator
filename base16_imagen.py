@@ -1,14 +1,16 @@
 import math
 import os
-from typing import Callable, Dict, List, Tuple, Union
+from typing import Callable, Dict, List, Sequence, Tuple, Union
 
 import colorthief
 import structlog
+
 
 class Theme:
     """
     Theme class
     """
+
     def __init__(self, name: str, colours: List, variant: str, intensity: int) -> None:
         """
         Initialise a theme
@@ -38,7 +40,7 @@ class Theme:
         Render every colour in palette
         """
         if self.designations is None:
-            raise ValueError("must designate first")
+            raise ValueError("Must designate first")
 
         for name, colour in self.designations.items():
             self._render(colour, text=f"{colour} -> {name}")
@@ -120,7 +122,7 @@ class Theme:
 
         tone = "dark" if self.dark else "light"
 
-        def get_preference(options: List, metric_name: str = "") -> tuple:
+        def get_preference(options: Sequence, metric_name: str = "") -> tuple:
             """
             Get reuse preferences
             """
@@ -152,6 +154,7 @@ class Theme:
             raise ValueError("Bad highlight selection")
 
         desired, undesired = [], []
+
         for colour, string in zip(rgb, ["red", "green", "blue"]):
             if string in highlights:
                 desired.append(colour)
@@ -179,22 +182,14 @@ class Theme:
         self.palette = self.generate_palette(colours, variant, intensity)
         self.designations = self.assign_palette()
 
-    def save(
-        self,
-        vim: bool = False,
-        shell: bool = False,
-        vim_path: str = ".",
-        shell_path: str = ".",
-    ) -> None:
+    def save(self, vim: str = ".", shell: str = ".",) -> None:
         """
         Save theme to a .vim file and a .sh file
 
         Parameters
         ----------
-        vim: whether or not to produce a vim-file
-        shell: whether or not to produce a shell-file
-        vim_path : where the vim-theme will be saved (Default value is current directory)
-        shell_path : where the shell-theme will be saved (Default value is current directory)
+        vim: where to save the .vim theme file (default="")
+        shell: where to save the .shell theme file
         """
 
         if not self.designations:
@@ -204,10 +199,10 @@ class Theme:
             raise ValueError("Must select at least one or 'shell' or 'vim'")
 
         if vim:
-            self._save_vim(vim_path)
+            self._save_vim(vim)
 
         if shell:
-            self._save_shell(shell_path)
+            self._save_shell(shell)
 
     def _save_vim(self, path: str) -> None:
         """
@@ -225,7 +220,7 @@ class Theme:
                 f"__hashed_{label}__", f"#{hexcode}"
             )
 
-        with open(f"{os.path.expanduser(path)}/{self.name}.vim", "w",) as file:
+        with open(f"{os.path.expanduser(path)}/{self.name}.vim", "w") as file:
             file.write(vim_file)
 
     def _save_shell(self, path: str) -> None:
@@ -267,7 +262,7 @@ class Theme:
         else:
             darkness_boundaries = [0, 255 * (intensity / 100)]
 
-        self.dark = variant == "dark" or (variant is None and dark)
+        self.dark = (variant == "dark") or (not variant and dark)
 
         [lower_bound, upper_bound] = darkness_boundaries
 
@@ -347,6 +342,7 @@ class Theme:
 
         return chosen
 
+
 class ThemeMaker:
     """
     ThemeMaker class
@@ -371,4 +367,6 @@ class ThemeMaker:
         """
         Create a theme
         """
-        return Theme(name, self.colours, variant, intensity)
+        return Theme(
+            f'base16-{name.lstrip("base16-")}', self.colours, variant, intensity
+        )
