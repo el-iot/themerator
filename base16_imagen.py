@@ -72,14 +72,14 @@ class Theme:
                 ("color03", "yellow"),  # yellow
                 ("color05", "magenta"),  # magenta
                 ("color06", "cyan"),  # cyan
-                ("color18", "dark"),  # ?
-                ("color19", "dark"),  # ?
-                ("color20", "dark"),  # ?
-                ("color21", "dark"),  # ?
-                ("color15", "dark"),  # ?
-                ("color16", "dark"),  # ?
-                ("color17", "dark"),  # ?
-                ("color08", "dark"),  # ?
+                ("color18", "dark"),
+                ("color19", "dark"),
+                ("color20", "dark"),
+                ("color21", "dark"),
+                ("color15", "dark"),
+                ("color16", "dark"),
+                ("color17", "dark"),
+                ("color08", "dark"),
             ],
             "light": [
                 ("color00", "light"),  # background
@@ -90,14 +90,14 @@ class Theme:
                 ("color03", "yellow"),  # yellow
                 ("color05", "magenta"),  # magenta
                 ("color06", "cyan"),  # cyan
-                ("color18", "light"),  # ?
-                ("color19", "light"),  # ?
-                ("color20", "light"),  # ?
-                ("color21", "light"),  # ?
-                ("color15", "light"),  # ?
-                ("color16", "light"),  # ?
-                ("color17", "light"),  # ?
-                ("color08", "light"),  # ?
+                ("color18", "light"),
+                ("color19", "light"),
+                ("color20", "light"),
+                ("color21", "light"),
+                ("color15", "light"),
+                ("color16", "light"),
+                ("color17", "light"),
+                ("color08", "light"),
             ],
         }
 
@@ -168,7 +168,6 @@ class Theme:
         """
         Convert an RGB-defined colour to a hex-defined colour with a given separator
         """
-
         _pad = lambda x: "0" * (2 - len(x)) + x
 
         return separator.join(_pad(hex(colour)[2:]) for colour in [red, green, blue])
