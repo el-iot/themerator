@@ -3,7 +3,10 @@ import os
 from typing import Callable, Dict, List, Sequence, Tuple, Union
 
 import colorthief
+import cv2
+import numpy
 import structlog
+from PIL import Image
 
 
 class Theme:
@@ -44,6 +47,43 @@ class Theme:
 
         for name, colour in self.designations.items():
             self._render(colour, text=f"{colour} -> {name}")
+
+    def preview(self, name):
+        """
+        Create a preview image of a theme
+        """
+        template = cv2.imread("assets/terminal_preview.png")
+
+        original_colours = {
+            (26, 26, 26): "color00",
+            (216, 133, 104): "color01",
+            (131, 164, 113): "color02",
+            (185, 147, 83): "color03",
+            (142, 204, 221): "color04",
+            (185, 142, 178): "color05",
+            (124, 156, 174): "color06",
+            (204, 204, 204): "color07",
+            (118, 118, 118): "color08",
+            (248, 248, 248): "color15",
+            (216, 104, 104): "color16",
+            (139, 108, 55): "color17",
+            (34, 34, 34): "color18",
+            (29, 65, 77): "color19",
+            (184, 184, 184): "color20",
+            (232, 232, 232): "color21",
+        }
+
+        height, width, _ = template.shape
+
+        for x in range(width):
+            for y in range(height):
+                original_colour = original_colours[tuple(template[y, x, :][::-1])]
+                final_colour = self.designations[original_colour]
+                template[y][x][0] = final_colour[0]
+                template[y][x][1] = final_colour[1]
+                template[y][x][2] = final_colour[2]
+
+        Image.fromarray(template).save(name.replace(".png", "") + ".png")
 
     def assign_palette(self) -> Dict:
         """
