@@ -4,8 +4,8 @@ from typing import Callable, Dict, List, Sequence, Tuple, Union
 
 import colorthief
 import cv2
-import numpy
 import structlog
+import tqdm
 from PIL import Image
 
 
@@ -48,7 +48,7 @@ class Theme:
         for name, colour in self.designations.items():
             self._render(colour, text=f"{colour} -> {name}")
 
-    def preview(self, name):
+    def preview(self):
         """
         Create a preview image of a theme
         """
@@ -75,7 +75,7 @@ class Theme:
 
         height, width, _ = template.shape
 
-        for x in range(width):
+        for x in tqdm.tqdm(range(width)):
             for y in range(height):
                 original_colour = original_colours[tuple(template[y, x, :][::-1])]
                 final_colour = self.designations[original_colour]
@@ -83,7 +83,7 @@ class Theme:
                 template[y][x][1] = final_colour[1]
                 template[y][x][2] = final_colour[2]
 
-        Image.fromarray(template).save(name.replace(".png", "") + ".png")
+        Image.fromarray(template).save(f"{self.name}_preview.png")
 
     def assign_palette(self) -> Dict:
         """

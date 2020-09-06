@@ -1,9 +1,13 @@
+#! /usr/bin/env python3
 import sys
 import cv2
-import numpy
 
 from PIL import Image
 from tqdm import tqdm
+from typing import Tuple
+
+Point = Tuple[int, int, int]
+
 
 colours = [
     (26, 26, 26),
@@ -27,7 +31,7 @@ colours = [
 ]
 
 
-def get_nearest(point):
+def get_nearest(point: Point) -> Point:
     return sorted(
         colours,
         key=lambda x: abs(x[0] - point[0])
@@ -36,28 +40,27 @@ def get_nearest(point):
     )[0]
 
 
-def make_preview(scale, name):
-
+def make_preview(scale: int, name: str) -> None:
+    """
+    Scale-down an image and round each pixel to its nearest colour
+    """
     image = cv2.imread(name)
     height, width, _ = image.shape
 
     height //= scale
     width //= scale
 
-    image = cv2.resize(image, (width, height))
+    image = cv2.cvtColor(cv2.resize(image, (width, height)), cv2.COLOR_BGR2RGB)
 
-    for py in tqdm(range(height)):
-        for px in range(width):
-            input_color = (image[py][px][0], image[py][px][1], image[py][px][2])
+    for y in tqdm(range(height)):
+        for x in range(width):
+            input_color = (image[y][x][0], image[y][x][1], image[y][x][2])
             nearest_color = get_nearest(input_color)
-
-            image[py][px][0] = nearest_color[0]
-            image[py][px][1] = nearest_color[1]
-            image[py][px][2] = nearest_color[2]
+            image[y][x] = nearest_color
 
     n_distinct = len(set([tuple(i) for j in image.tolist() for i in j]))
 
-    print(f'Rendered to {n_distinct} distinct colours')
+    print(f"Rendered to {n_distinct} distinct colours")
 
     Image.fromarray(image).save(name.replace(".png", "") + "_preview.png")
 
