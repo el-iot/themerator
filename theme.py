@@ -13,7 +13,9 @@ class Theme:
     Theme class
     """
 
-    def __init__(self, name: str, colours: List, variant: str, intensity: int, path: str) -> None:
+    def __init__(
+        self, name: str, colours: List, variant: str, intensity: int, path: str
+    ) -> None:
         """
         Initialise a theme
         """
