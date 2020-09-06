@@ -2,7 +2,6 @@ import math
 import os
 from typing import Callable, Dict, List, Sequence, Tuple, Union
 
-import colorthief
 import cv2
 import structlog
 import tqdm
@@ -14,14 +13,14 @@ class Theme:
     Theme class
     """
 
-    def __init__(self, name: str, colours: List, variant: str, intensity: int) -> None:
+    def __init__(self, name: str, colours: List, variant: str, intensity: int, path: str) -> None:
         """
         Initialise a theme
         """
         self.name = name
         self.logger = structlog.getLogger(f"{self.name}-theme")
         self.generate_designations(colours, variant, intensity)
-        self.render()
+        self.path = path
 
     def _render(self, colour: Union[tuple, str], text: str = None) -> None:
         """
@@ -48,11 +47,11 @@ class Theme:
         for name, colour in self.designations.items():
             self._render(colour, text=f"{colour} -> {name}")
 
-    def preview(self):
+    def preview(self) -> None:
         """
         Create a preview image of a theme
         """
-        template = cv2.imread("assets/terminal_preview.png")
+        template = cv2.imread(f"{self.path}/assets/terminal_preview.png")
 
         original_colours = {
             (26, 26, 26): "color00",
@@ -248,7 +247,7 @@ class Theme:
         Save base16 vim theme
         """
 
-        with open("assets/theme_templates/vim.txt", "r") as file:
+        with open(f"{self.path}/assets/theme_templates/vim.txt", "r") as file:
             vim_file = file.read()
         vim_file = vim_file.replace("__theme_name__", self.name)
 
@@ -266,7 +265,7 @@ class Theme:
         """
         Save base16 shell theme
         """
-        with open("assets/theme_templates/shell.txt", "r") as file:
+        with open(f"{self.path}/assets/theme_templates/shell.txt", "r") as file:
             shell_file = file.read()
 
         shell_file = shell_file.replace("__theme__name__", self.name)
@@ -380,32 +379,3 @@ class Theme:
             chosen.append(colour)
 
         return chosen
-
-
-class ThemeMaker:
-    """
-    ThemeMaker class
-    """
-
-    def __init__(
-        self, image_path: str,
-    ):
-        """
-        Initialise the palette
-        """
-        self.logger = structlog.get_logger(name="theme-maker")
-        self.thief = colorthief.ColorThief(image_path)
-
-        self.logger.info(f"Getting colours from image ({image_path})")
-
-        self.colours = [self.thief.get_color(1)] + [
-            *self.thief.get_palette(color_count=50, quality=1)
-        ]
-
-    def create_theme(self, name: str, variant: str = "", intensity: int = 100) -> Theme:
-        """
-        Create a theme
-        """
-        return Theme(
-            f'base16-{name.lstrip("base16-")}', self.colours, variant, intensity
-        )
