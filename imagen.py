@@ -26,15 +26,28 @@ def main() -> None:
         "--variant",
         type=int,
         default=None,
-        help="Theme-variant (dark=0, light=1). If unselected then this will be chosen based on the available colours in the image",
+        help=(
+            "Theme-variant (dark=0, light=1). "
+            "If unselected then this will be chosen based "
+            "on the available colours in the image"
+        ),
     )
 
-    parser.add_argument("-p", "--preview", help="Preview", action="store_true")
-    args = parser.parse_args()
+    parser.add_argument(
+        "-i", "--intensity", type=int, default=100, help="Theme intensity",
+    )
 
-    variant = {0: 'dark', 1: 'light'}.get(args.variant)
+    parser.add_argument(
+        "-p", "--preview", help="Create a preview the theme", action="store_true"
+    )
+
+    args = parser.parse_args()
+    variant = {0: "dark", 1: "light"}.get(args.variant)
+
     maker = ThemeMaker(args.IMAGE_PATH, path=PATH)
-    theme = maker.create_theme(args.THEME_NAME, variant=variant)
+    theme = maker.create_theme(
+        args.THEME_NAME, variant=variant, intensity=args.intensity
+    )
 
     if args.preview:
         theme.preview()
